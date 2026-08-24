@@ -27,6 +27,15 @@ const connectDB = async () => {
         membershipType: "basic"
       });
     }
+
+    const adminExists = await Member.findOne({ email: "admin@fitzone.com" });
+    if (!adminExists) {
+      await Member.create({
+        name: "Admin Manager",
+        email: "admin@fitzone.com",
+        membershipType: "platinum"
+      });
+    }
   } catch (error) {
     console.error("MongoDB connection failed:", error.message);
     process.exit(1);

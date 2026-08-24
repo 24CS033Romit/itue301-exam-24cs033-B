@@ -25,10 +25,15 @@ router.post('/login', async (req, res, next) => {
       });
     }
 
+    let role = 'member';
+    if (member.email.toLowerCase().includes('admin')) {
+      role = 'admin';
+    }
+
     const token = jwt.sign(
       {
         memberId: member._id,
-        role: 'member'
+        role
       },
       process.env.JWT_SECRET || 'your_secret_key',
       { expiresIn: '7d' }
@@ -38,7 +43,7 @@ router.post('/login', async (req, res, next) => {
       success: true,
       token,
       member,
-      role: 'member'
+      role
     });
   } catch (error) {
     next(error);
