@@ -355,10 +355,16 @@ function ClassesPage() {
             const isFull = availableSpots <= 0;
             const percentageBooked = Math.min(100, Math.round((cls.bookedCount / cls.capacity) * 100));
 
+            const classSpec = (cls.specialization || cls.category || '').toLowerCase();
             const matchingTrainer =
               trainers.find((t) =>
-                (t.specialization || '').toLowerCase().includes(cls.specialization.toLowerCase())
-              ) || currentTrainerObj || (trainers.length > 0 ? trainers[0] : null);
+                classSpec && (t.specialization || '').toLowerCase().includes(classSpec)
+              ) ||
+              trainers.find((t) =>
+                cls.trainer && (t.name || '').toLowerCase() === (cls.trainer || '').toLowerCase()
+              ) ||
+              currentTrainerObj ||
+              (trainers.length > 0 ? trainers[0] : null);
 
             const trainerName = matchingTrainer ? matchingTrainer.name : 'FitZone Coach';
 

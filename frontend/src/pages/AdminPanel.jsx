@@ -214,6 +214,7 @@ function AdminPanel() {
     const newClass = {
       id: 'c-' + Date.now(),
       category: name.includes('Yoga') ? 'Yoga' : name.includes('HIIT') ? 'HIIT' : name.includes('Zumba') ? 'Zumba' : 'Strength',
+      specialization: selectedTrainerObj?.specialization || (name.includes('Yoga') ? 'Yoga' : name.includes('HIIT') ? 'HIIT' : name.includes('Zumba') ? 'Zumba' : 'Strength'),
       name: name.trim(),
       trainer: trainerName,
       date: classDate,
