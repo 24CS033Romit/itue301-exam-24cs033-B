@@ -5,6 +5,40 @@ import { useAuth } from '../context/AuthContext';
 
 const API_URL = 'http://localhost:5000/api/v1';
 
+// Dynamic Hero Background Slides
+const HERO_BG_SLIDES = [
+  {
+    url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop',
+    title: 'Find Your Perfect Workout',
+    tag: '⚡ FitZone Schedule & Live Booking'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1600&auto=format&fit=crop',
+    title: 'Strength, Power & Peak Performance',
+    tag: '🔥 Elite Training Equipment'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1600&auto=format&fit=crop',
+    title: 'Serenity, Flexibility & Mindful Yoga',
+    tag: '🧘 Mind & Body Sanctuary'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1600&auto=format&fit=crop',
+    title: 'High-Energy Cardio & HIIT Sessions',
+    tag: '⚡ Burn 800+ Calories / Class'
+  }
+];
+
+// Gym Ambiance Scrolling Showcase
+const GYM_MARQUEE_PHOTOS = [
+  { img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600&auto=format&fit=crop', label: '🏋️ Free Weights Arena' },
+  { img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop', label: '🔥 Functional HIIT Turf' },
+  { img: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=600&auto=format&fit=crop', label: '🧘 Zen Yoga Sanctuary' },
+  { img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600&auto=format&fit=crop', label: '🚴 Spin Cycling Studio' },
+  { img: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=600&auto=format&fit=crop', label: '🥊 Combat & Boxing Ring' },
+  { img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop', label: '⚡ Hydro Recovery Lab' }
+];
+
 function ClassesPage() {
   const [trainers, setTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,9 +51,18 @@ function ClassesPage() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingMessage, setBookingMessage] = useState(null);
+  const [heroSlide, setHeroSlide] = useState(0);
 
   const { member, token } = useAuth();
   const navigate = useNavigate();
+
+  // Auto rotate background hero slides every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % HERO_BG_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Fetch trainers from GET /api/v1/trainers on mount
   const fetchTrainers = async () => {
@@ -151,6 +194,7 @@ function ClassesPage() {
       days: 'Mon, Wed, Fri',
       capacity: 15,
       bookedCount: 3,
+      coverImg: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=600&auto=format&fit=crop',
       description: 'Gentle stretching, core balance exercises, and mindfulness for flexibility and vitality.'
     },
     {
@@ -162,6 +206,7 @@ function ClassesPage() {
       days: 'Mon to Fri',
       capacity: 20,
       bookedCount: 8,
+      coverImg: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop',
       description: 'High intensity interval training designed for rapid calorie burn and cardiovascular endurance.'
     },
     {
@@ -173,6 +218,7 @@ function ClassesPage() {
       days: 'Tue, Thu, Sat',
       capacity: 12,
       bookedCount: 6,
+      coverImg: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600&auto=format&fit=crop',
       description: 'Progressive barbell weightlifting and resistance movements to build lean muscle and power.'
     },
     {
@@ -184,6 +230,7 @@ function ClassesPage() {
       days: 'Mon, Wed, Fri',
       capacity: 25,
       bookedCount: 12,
+      coverImg: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600&auto=format&fit=crop',
       description: 'High-energy dance workout set to upbeat tempo music for full-body aerobic fitness.'
     }
   ];
@@ -204,31 +251,73 @@ function ClassesPage() {
 
   return (
     <div className="container">
-      {/* Fitness Hero Banner */}
+      {/* Fitness Hero Banner with Dynamic Photo Scrolling */}
       <div className="fitness-hero">
-        <div className="fitness-hero-tag">⚡ FitZone Schedule & Live Booking</div>
-        <h1 className="fitness-hero-title">Find Your Perfect Workout</h1>
-        <p className="fitness-hero-desc">
-          Train smarter. Reserve your favorite fitness classes, collaborate with certified coaches, and achieve your personal health milestones.
-        </p>
+        <div
+          className="fitness-hero-bg active"
+          style={{ backgroundImage: `url(${HERO_BG_SLIDES[heroSlide].url})` }}
+        ></div>
+        <div className="fitness-hero-overlay"></div>
 
-        <div className="fitness-stats-row">
-          <div className="stat-item">
-            <span className="stat-number">12+</span>
-            <span className="stat-label">Weekly Classes</span>
+        <div className="fitness-hero-content">
+          <div className="fitness-hero-top-row">
+            <div className="fitness-hero-tag">
+              {HERO_BG_SLIDES[heroSlide].tag}
+            </div>
+
+            {/* Slide Navigation Dots */}
+            <div className="hero-slide-dots">
+              {HERO_BG_SLIDES.map((slide, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`hero-slide-dot ${heroSlide === idx ? 'active' : ''}`}
+                  onClick={() => setHeroSlide(idx)}
+                  title={`View ${slide.title}`}
+                />
+              ))}
+            </div>
           </div>
-          <div className="stat-item">
-            <span className="stat-number">{trainers.length || '4'}</span>
-            <span className="stat-label">Certified Coaches</span>
+
+          <h1 className="fitness-hero-title">
+            {HERO_BG_SLIDES[heroSlide].title}
+          </h1>
+          <p className="fitness-hero-desc">
+            Train smarter. Reserve your favorite fitness classes, collaborate with certified coaches, and achieve your personal health milestones.
+          </p>
+
+          <div className="fitness-stats-row">
+            <div className="stat-item">
+              <span className="stat-number">12+</span>
+              <span className="stat-label">Weekly Classes</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{trainers.length || '4'}</span>
+              <span className="stat-label">Certified Coaches</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">250+</span>
+              <span className="stat-label">Active Members</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">99%</span>
+              <span className="stat-label">Satisfaction Rate</span>
+            </div>
           </div>
-          <div className="stat-item">
-            <span className="stat-number">250+</span>
-            <span className="stat-label">Active Members</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">99%</span>
-            <span className="stat-label">Satisfaction Rate</span>
-          </div>
+        </div>
+      </div>
+
+      {/* Infinite Gym Photo Ambience Strip */}
+      <div className="gym-marquee-section">
+        <div className="gym-marquee-track">
+          {[...GYM_MARQUEE_PHOTOS, ...GYM_MARQUEE_PHOTOS].map((photo, i) => (
+            <div key={i} className="gym-photo-card">
+              <img src={photo.img} alt={photo.label} />
+              <div className="gym-photo-overlay">
+                <span className="gym-photo-label">{photo.label}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -367,11 +456,24 @@ function ClassesPage() {
               (trainers.length > 0 ? trainers[0] : null);
 
             const trainerName = matchingTrainer ? matchingTrainer.name : 'FitZone Coach';
+            const fallbackImg = cls.category === 'Yoga'
+              ? 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=600&auto=format&fit=crop'
+              : cls.category === 'HIIT'
+              ? 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop'
+              : cls.category === 'Strength'
+              ? 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600&auto=format&fit=crop'
+              : 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600&auto=format&fit=crop';
 
             return (
               <div key={cls.id} className="class-card">
-                <div>
-                  <span className="class-category-badge">{cls.category}</span>
+                {/* Visual Image Header */}
+                <div
+                  className="class-card-banner"
+                  style={{ backgroundImage: `url(${cls.coverImg || fallbackImg})` }}
+                >
+                  <div className="class-card-banner-overlay">
+                    <span className="class-category-badge">{cls.category || 'Fitness'}</span>
+                  </div>
                 </div>
 
                 <div className="class-header-row">
